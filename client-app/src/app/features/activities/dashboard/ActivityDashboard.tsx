@@ -3,32 +3,23 @@ import { Grid, GridColumn } from 'semantic-ui-react'
 import ActivityList from './ActivityList'
 import ActivityDetails from '../details/ActivityDetails'
 import ActivityForm from '../form/ActivityForm'
-import { Activity } from '../../../../models/Activity'
+import { UseStore } from '../../../stores/store'
+import { observer } from 'mobx-react-lite'
 
-export default function ActivityDashboard({activities,selectActivity,cancelActivity,selectedActivity,editMode,openForm,closeForm,handleDeleteActivity,handleCreateOrEditActivity,submiting}:Props) {
+export default  observer(function ActivityDashboard() {
+  const {activityStore}=UseStore();
   return (
     <>
     <Grid>
    <GridColumn width={'10'} >
-   <ActivityList activities={activities} closeForm={closeForm} selectActivity={selectActivity} handleDeleteActivity={handleDeleteActivity} submiting={submiting} />
+   <ActivityList   />
    </GridColumn>
    <GridColumn width={'6'}>
-    {selectedActivity && !editMode && <ActivityDetails  openForm={openForm}  activity={selectedActivity} cancelActivity={cancelActivity} />}
-    {editMode && <ActivityForm activity={selectedActivity} closeForm={closeForm} handleCreateOrEditActivity={handleCreateOrEditActivity} submiting={submiting} />}
+    {activityStore.selectedActivity && !activityStore.editMode && <ActivityDetails />}
+    {activityStore.editMode && <ActivityForm />}
    </GridColumn>
    </Grid>
     </>
   )
-}
-interface Props{
-    activities:Activity[];
-    cancelActivity:()=>void;
-    selectedActivity:Activity|undefined;
-    selectActivity:(id:string)=>void;
-    openForm:(id:string)=>void;
-    handleDeleteActivity:(id:string)=>void;
-    closeForm:()=>void;
-    editMode:boolean;
-    handleCreateOrEditActivity:(activity:Activity)=>void;
-    submiting:boolean;
-}
+})
+
