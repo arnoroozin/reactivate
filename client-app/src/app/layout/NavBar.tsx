@@ -1,20 +1,20 @@
 import { Button, Menu } from "semantic-ui-react";
-import { UseStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
+import { NavLink } from "react-router-dom";
 
 
 export default observer( function NavBar(){
-  const { activityStore } = UseStore();
+  
 
     return(
         <Menu inverted fixed="top">
-            <Menu.Item header>
+            <Menu.Item header as={NavLink} to="/">
             <img src="/assets/logo.png" alt="logo"  style={{marginRight:'1rem'}}/>
             Activities
             </Menu.Item>
-            <Menu.Item name="Activities" />
+            <Menu.Item name="Activities" as={NavLink} to="/activities" />
             <Menu.Item>
-                <Button positive content="Create An Activity" onClick={()=>{activityStore.openForm(); activityStore.cancelActivity();}}/> 
+                <Button positive content="Create An Activity" as={NavLink} to="/createactivity" /> 
             </Menu.Item>
         </Menu>
     );

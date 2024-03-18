@@ -3,6 +3,7 @@ import { Button, Item, ItemContent, ItemDescription, ItemExtra, ItemGroup, ItemH
 import { SyntheticEvent, useState } from "react";
 import { UseStore } from "../../../stores/store";
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
 
 
 export default observer( function ActivityList() {
@@ -28,7 +29,7 @@ export default observer( function ActivityList() {
              <div> {activity.city},{activity.venue}</div>
             </ItemDescription>
             <ItemExtra>
-                <Button floated='right' content='View' color="blue" onClick={()=>{activityStore.closeForm();activityStore.selectActivity(activity.id); }} />
+                <Button floated='right' content='View' color="blue" as={Link} to={`/activities/${activity.id}`} />
                 <Button loading={activityStore.loading && target===activity.id} name={activity.id} floated='right' content='Delete' color="red" onClick={(e)=>{ handleDeleteLoading(e,activity.id); }} />
                 <Label basic content={activity.category} />
             </ItemExtra>

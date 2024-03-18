@@ -2,11 +2,20 @@ import { Button, ButtonGroup, Card, CardContent, CardDescription, CardHeader, Ca
 
 import { UseStore } from "../../../stores/store";
 import { observer } from "mobx-react-lite";
+import { Link, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import LoadingComponent from "../../../layout/LoadingComponent";
 
 export default observer( function ActivityDetails() {
   const{activityStore}=UseStore();
+  const {id}=useParams();
+  useEffect(()=>{
+    if(id)activityStore.LoadActivity(id);
+
+  },[id,activityStore.LoadActivity])
+  
   if(!activityStore.selectedActivity)
-  return;
+  return <LoadingComponent/>;
   return (
     <Card fluid>
     <Image src={`/assets/categoryImages/${activityStore.selectedActivity?.category}.jpg`}   />
@@ -21,8 +30,8 @@ export default observer( function ActivityDetails() {
     </CardContent>
     <CardContent extra>
       <ButtonGroup widths={'2'}>
-        <Button basic animated color="blue" content="Edit" onClick={()=>activityStore.openForm(activityStore.selectedActivity?.id)} />
-        <Button basic animated color="grey" content="Cancel" onClick={activityStore.cancelActivity} />
+        <Button as={Link} to={`/manage/${activityStore.selectedActivity.id}`}  basic animated color="blue" content="Edit"  />
+        <Button  as={Link}  to='/activities' basic animated color="grey" content="Cancel" />
       </ButtonGroup>
     </CardContent>
   </Card>
