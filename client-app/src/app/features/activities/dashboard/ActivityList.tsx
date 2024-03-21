@@ -1,46 +1,32 @@
-import { Button, Item, ItemContent, ItemDescription, ItemExtra, ItemGroup, ItemHeader, ItemMeta, Label, Segment } from "semantic-ui-react";
+import {  Header } from "semantic-ui-react";
 
-import { SyntheticEvent, useState } from "react";
 import { UseStore } from "../../../stores/store";
 import { observer } from "mobx-react-lite";
-import { Link } from "react-router-dom";
+import ActivityListItem from "./ActivityListItem";
+import { Fragment } from "react";
 
 
 export default observer( function ActivityList() {
+
   const { activityStore } = UseStore();
- const[target,setTarget]=useState('');
-  function handleDeleteLoading(e:SyntheticEvent<HTMLButtonElement>,id:string){
-  setTarget(e.currentTarget.name);
-    activityStore.DeleteActivity(id);
-  }
-  
 
   return (
-   <Segment>
-    <ItemGroup divided>
-{ activityStore.activities.map(activity=>(
-        <Item key={activity.id}>
-          
-          <ItemContent>
-            <ItemHeader as='a'>{activity.title}</ItemHeader>
-            <ItemMeta>{activity.date}</ItemMeta>
-            <ItemDescription>
-             <div> {activity.description} </div>
-             <div> {activity.city},{activity.venue}</div>
-            </ItemDescription>
-            <ItemExtra>
-                <Button floated='right' content='View' color="blue" as={Link} to={`/activities/${activity.id}`} />
-                <Button loading={activityStore.loading && target===activity.id} name={activity.id} floated='right' content='Delete' color="red" onClick={(e)=>{ handleDeleteLoading(e,activity.id); }} />
-                <Label basic content={activity.category} />
-            </ItemExtra>
-          </ItemContent>
-        </Item>
-        
+    <>
+    {activityStore.groupedActivities.map(([date,activities])=>(
+      <Fragment key={date}>
+        <Header sub color="teal">
+          {date}
+        </Header>
+     
+            {activities.map(activity => (
 
-))
-}
-    </ItemGroup>
-    </Segment>
+              <ActivityListItem key={activity.id} activity={activity} />
+
+            ))}
+        </Fragment>
+))}
+   
+    </>
   );
 })
  

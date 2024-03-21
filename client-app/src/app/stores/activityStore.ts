@@ -18,6 +18,19 @@ export default class ActivityStore {
       (a, b) => Date.parse(a.date) - Date.parse(b.date)
     );
   }
+  get groupedActivities() {
+    
+    return Object.entries(
+      this.activities.reduce((activities, activity) => {
+        const date = activity.date;
+        activities[date] = activities[date]
+          ? [...activities[date], activity]
+          : [activity];
+          
+        return activities;
+      }, {} as { [key: string]: Activity[] })
+    );
+  }
 
   loadActivities = async () => {
     this.setInitLoading(true);
@@ -44,14 +57,14 @@ export default class ActivityStore {
     try {
       let activity = this.activityRegistery.get(id);
       if (activity) {
-        this.selectedActivity = activity;
+        runInAction(() =>  this.selectedActivity = activity);
         this.setInitLoading(false);
         return activity;
       } else {
         activity = await agent.Activities.detail(id);
         if (activity) {
           this.setActivity(activity);
-          this.selectedActivity = activity;
+          runInAction(() =>  this.selectedActivity = activity);
 
           this.setInitLoading(false);
           return activity;
@@ -74,7 +87,7 @@ export default class ActivityStore {
       runInAction(() => {
         this.activityRegistery.set(activity.id, activity);
       });
-      this.selectedActivity = activity;
+      runInAction(() =>  this.selectedActivity = activity);
       this.editMode = false;
       this.loading = false;
     } catch (error) {
@@ -91,7 +104,7 @@ export default class ActivityStore {
       runInAction(() => {
         this.activityRegistery.set(activity.id, activity);
       });
-      this.selectedActivity = activity;
+      runInAction(() =>this.selectedActivity = activity);
       this.editMode = false;
       this.loading = false;
     } catch (error) {
