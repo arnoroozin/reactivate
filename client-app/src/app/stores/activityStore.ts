@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { Activity } from "../../models/Activity";
 import agent from "../api/agents";
 import { v4 as uuid } from "uuid";
+import { format } from "date-fns";
 
 export default class ActivityStore {
   activityRegistery = new Map<string, Activity>();
@@ -15,18 +16,17 @@ export default class ActivityStore {
 
   get activities() {
     return Array.from(this.activityRegistery.values()).sort(
-      (a, b) => Date.parse(a.date) - Date.parse(b.date)
+      (a, b) => a.date!.getTime() - b.date!.getTime()
     );
   }
   get groupedActivities() {
-    
     return Object.entries(
       this.activities.reduce((activities, activity) => {
-        const date = activity.date;
+        const date = format(activity.date!, "dd MMM yyyy");
         activities[date] = activities[date]
           ? [...activities[date], activity]
           : [activity];
-          
+
         return activities;
       }, {} as { [key: string]: Activity[] })
     );
@@ -47,7 +47,7 @@ export default class ActivityStore {
     }
   };
   private setActivity = async (activity: Activity) => {
-    activity.date = activity.date.split("T")[0];
+    activity.date = new Date(activity.date!);
 
     this.activityRegistery.set(activity.id, activity);
   };
@@ -57,14 +57,14 @@ export default class ActivityStore {
     try {
       let activity = this.activityRegistery.get(id);
       if (activity) {
-        runInAction(() =>  this.selectedActivity = activity);
+        runInAction(() => (this.selectedActivity = activity));
         this.setInitLoading(false);
         return activity;
       } else {
         activity = await agent.Activities.detail(id);
         if (activity) {
           this.setActivity(activity);
-          runInAction(() =>  this.selectedActivity = activity);
+          runInAction(() => (this.selectedActivity = activity));
 
           this.setInitLoading(false);
           return activity;
@@ -87,7 +87,7 @@ export default class ActivityStore {
       runInAction(() => {
         this.activityRegistery.set(activity.id, activity);
       });
-      runInAction(() =>  this.selectedActivity = activity);
+      runInAction(() => (this.selectedActivity = activity));
       this.editMode = false;
       this.loading = false;
     } catch (error) {
@@ -97,14 +97,14 @@ export default class ActivityStore {
   };
 
   CreateActivity = async (activity: Activity) => {
+    this.loading = true;
     try {
-      this.loading = true;
       activity.id = uuid();
       await agent.Activities.create(activity);
       runInAction(() => {
         this.activityRegistery.set(activity.id, activity);
       });
-      runInAction(() =>this.selectedActivity = activity);
+      runInAction(() => (this.selectedActivity = activity));
       this.editMode = false;
       this.loading = false;
     } catch (error) {

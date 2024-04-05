@@ -10,6 +10,7 @@ import {
 // import { SyntheticEvent, useState } from "react";
 import { Activity } from "../../../../models/Activity";
 import { observer } from "mobx-react-lite";
+import { format } from "date-fns";
 
 interface Props {
   activity: Activity;
@@ -42,7 +43,7 @@ export default observer( function ActivityListItem({ activity }: Props) {
    </Segment>
    <Segment>
     <span style={{marginRight:'1rem'}}>
-        <Icon name="clock" /> {activity.date}
+        <Icon name="clock" /> {format(activity.date!,'dd MMM yyyy h:mm aa')}
        </span >
 <span>
 <Icon name="marker" />{activity.venue}
