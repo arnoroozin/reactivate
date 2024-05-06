@@ -1,6 +1,6 @@
 import { Button, Header, Segment } from "semantic-ui-react";
 import { useEffect, useState } from "react";
-import { Activity } from "../../../../models/Activity";
+import {  ActivityFormValues } from "../../../../models/Activity";
 import { UseStore } from "../../../stores/store";
 import { observer } from "mobx-react-lite";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -15,18 +15,10 @@ import MyDateInput from "../../../common/form/MyDateInput";
 
 export default observer(function ActivityForm() {
   const { activityStore } = UseStore();
-  const { loading } = activityStore;
+  
   const { id } = useParams();
   const navigate = useNavigate();
-  const initValue = {
-    id: "",
-    title: "",
-    date: null,
-    description: "",
-    category: "",
-    city: "",
-    venue: "",
-  };
+ 
   const validationSchema = Yup.object({
     title: Yup.string().required("Activity title is required"),
     description: Yup.string().required(),
@@ -35,13 +27,13 @@ export default observer(function ActivityForm() {
     city: Yup.string().required(),
     category: Yup.string().required(),
   });
-  const [activity, setActivity] = useState<Activity>(initValue);
+  const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues);
   useEffect(() => {
     if (id)
-      activityStore.LoadActivity(id).then((activity) => setActivity(activity!));
-    else setActivity(initValue);
+      activityStore.LoadActivity(id).then((activity) => setActivity(new ActivityFormValues(activity)));
+    else setActivity(new ActivityFormValues);
   }, [id, activityStore.loadActivities]);
-  function handleFormSubmit(activity: Activity) {
+  function handleFormSubmit(activity: ActivityFormValues) {
     if (!activity.id) {
       activityStore
         .CreateActivity(activity)
@@ -96,7 +88,7 @@ export default observer(function ActivityForm() {
               <MyTextInput placeholder="City" name="city" />
               <MyTextInput placeholder="Venue" name="venue" />
               <Button
-                loading={loading}
+                loading={isSubmitting}
                 disabled={!isValid || !dirty || isSubmitting}
                 floated="right"
                 positive
