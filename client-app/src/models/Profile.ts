@@ -5,6 +5,8 @@ export default interface IProfile{
     displayName:string;
     image?:string;
     bio?:string;
+    photos?:Photo[];
+
 }
 export class Profile implements IProfile{
     /**
@@ -21,4 +23,10 @@ export class Profile implements IProfile{
     displayName:string;
     image?:string;
     bio?:string;
+    photos?:Photo[];
+}
+export interface Photo{
+  id:string;
+  url:string;
+  isMain:boolean;
 }
