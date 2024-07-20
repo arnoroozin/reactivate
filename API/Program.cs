@@ -1,5 +1,6 @@
 using API.Extentions;
 using API.Middleware;
+using API.SignalR;
 using Application;
 using Application.Core;
 using Domain;
@@ -33,7 +34,10 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
-app.MapControllers();   
+app.MapControllers();  
+app.MapHub<ChatHub>("/chat");
+
+   
 
 
 

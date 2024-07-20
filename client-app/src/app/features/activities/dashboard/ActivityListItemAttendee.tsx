@@ -8,7 +8,6 @@ interface Props {
   attendees: Profile[];
 }
 export default observer(function ActivityListItemAttendee({attendees}: Props) {
-  console.log(attendees);
   return (
     
     <List horizontal>
